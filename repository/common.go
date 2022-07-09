@@ -11,8 +11,6 @@ import (
 const (
 	EnvPathToSQLITE = "APP_SQLITE_DB_PATH"
 	EnvDBPoolSize   = "APP_SQLITE_DB_POOL_SIZE"
-
-	defaultPoolSize = 10
 )
 
 var (

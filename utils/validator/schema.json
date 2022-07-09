@@ -1,0 +1,63 @@
+{
+    "type": "object",
+    "properties": {
+        "organization_name": {
+            "type": "string"
+        },
+        "organization_bic": {
+            "type": "string",
+            "minLength": 1
+        },
+        "organization_iban": {
+            "type": "string",
+            "minLength": 1
+        },
+        "credit_transfers": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "string",
+                        "pattern": "^\\d+\\.{0,1}\\d{0,2}$"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "EUR",
+                            "USD"
+                        ]
+                    },
+                    "counterparty_name": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "counterparty_bic": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "counterparty_iban": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "amount",
+                    "currency",
+                    "counterparty_bic",
+                    "counterparty_iban"
+                ]
+            },
+            "minItems": 1
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "organization_bic",
+        "organization_iban"
+    ]
+}

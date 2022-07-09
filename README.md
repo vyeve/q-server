@@ -24,7 +24,7 @@ APP_SQLITE_DB_PATH=assets/schema.sqlite go run main.go
 
 ```shell
 docker build -t q-server .
-docker run -it --rm -p 8080:8080 -v $(pwd)/assets:/app/data -e  APP_SQLITE_DB_PATH=/app/data/schema.sqlite q-server
+docker run -it --rm -p 8080:8080 -v $(pwd)/assets:/app/data --env-file config.env q-server
 ```
 
 ### 3. Run docker-compose

@@ -12,11 +12,8 @@ services:
       - APP_SQLITE_DB_POOL_SIZE=20
     volumes:
       - type: bind
-        source: assets/
+        source: assets/ # relative path where schema.sqlite is stored
         target: /app/data
-      - type: bind
-        source: .
-        target: /tmp/ethereum
     networks:
       - service-network
 networks:

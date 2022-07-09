@@ -32,3 +32,7 @@ docker run -it --rm -p 8080:8080 -v $(pwd)/assets:/app/data --env-file config.en
 ```shell
 docker-compose up
 ```
+
+## TODO
+
+This approach will be work with count transfers less than 1000. If there are expecting more transfers in one receipt, should split `INSERT INTO` queries to bulks.

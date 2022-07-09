@@ -9,11 +9,13 @@ import (
 )
 
 const (
-	EnvServerPort    = "APP_SERVER_PORT"
-	defaultPort      = 8080
-	transferEndpoint = "/transfer"
-	uploadEndpoint   = "/upload"
-	fileKey          = "file"
+	EnvServerPort       = "APP_SERVER_PORT"
+	EnvRequestsLimit    = "APP_REQUESTS_LIMIT"
+	defaultPort         = 8080
+	defaultRequestLimit = 100
+	transferEndpoint    = "/transfer"
+	uploadEndpoint      = "/upload"
+	fileKey             = "file"
 )
 
 type Params struct {

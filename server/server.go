@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 	"syscall"
 
@@ -27,6 +28,7 @@ type serverImpl struct {
 	validator validator.ValidatorJSON
 	repo      repository.Repository
 	server    *http.Server
+	limit     chan struct{}
 }
 
 func New(params Params) Server {
@@ -43,6 +45,11 @@ func New(params Params) Server {
 		Addr:    ":" + port,
 		Handler: srv,
 	}
+	limit, err := strconv.Atoi(os.Getenv(EnvRequestsLimit))
+	if err != nil {
+		limit = defaultRequestLimit
+	}
+	srv.limit = make(chan struct{}, limit)
 	params.LifeCycle.Append(
 		fx.Hook{
 			OnStart: func(ctx context.Context) error {
@@ -55,6 +62,7 @@ func New(params Params) Server {
 				return nil
 			},
 			OnStop: func(ctx context.Context) error {
+				close(srv.limit)
 				return srv.server.Close()
 			},
 		},
@@ -65,6 +73,11 @@ func New(params Params) Server {
 func (s *serverImpl) Init() {}
 
 func (s *serverImpl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.logger.Debugf("request %q. method: %s", r.URL.Path, r.Method)
+	s.limit <- struct{}{}
+	defer func() {
+		<-s.limit
+	}()
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return

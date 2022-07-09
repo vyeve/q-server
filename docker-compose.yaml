@@ -1,0 +1,23 @@
+version: "3"
+services:
+  service:
+    build: .
+    image: q-server
+    ports:
+      - 8080:8080
+    environment:
+      - APP_SERVER_PORT=8080
+      - APP_LOG_LEVEL=debug
+      - APP_SQLITE_DB_PATH=/app/data/schema.sqlite
+      - APP_SQLITE_DB_POOL_SIZE=20
+    volumes:
+      - type: bind
+        source: assets/
+        target: /app/data
+      - type: bind
+        source: .
+        target: /tmp/ethereum
+    networks:
+      - service-network
+networks:
+  service-network:

@@ -112,7 +112,7 @@ func TestReceipt_Unmarshal(t *testing.T) {
 	if cf := len(r.CreditTransfers); cf != 3 {
 		t.Fatalf("expected 3 credit transfers, got: %d", cf)
 	}
-	exp := Transaction{
+	exp := Transfer{
 		AmountCent:       1450,
 		Currency:         FiatEUR,
 		CounterpartyName: "Bip Bip",
@@ -145,12 +145,12 @@ func TestTransaction_Unmarshal(t *testing.T) {
 		"description": "Wonderland/4410"
 	}
 	`
-	tr := new(Transaction)
+	tr := new(Transfer)
 	err := json.Unmarshal([]byte(b), tr)
 	if err != nil {
 		t.Fatal(err)
 	}
-	exp := Transaction{
+	exp := Transfer{
 		AmountCent:       1450,
 		Currency:         FiatEUR,
 		CounterpartyName: "Bip Bip",

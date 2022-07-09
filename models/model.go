@@ -11,7 +11,7 @@ import (
 type (
 	Fiat string
 
-	Transaction struct {
+	Transfer struct {
 		AmountCent       int64  `json:"amount"`
 		Currency         Fiat   `json:"currency,omitempty"`
 		CounterpartyName string `json:"counterparty_name,omitempty"`
@@ -21,18 +21,18 @@ type (
 	}
 
 	Receipt struct {
-		OrganizationName string         `json:"organization_name,omitempty"`
-		OrganizationBIC  string         `json:"organization_bic,omitempty"`
-		OrganizationIBAN string         `json:"organization_iban,omitempty"`
-		CreditTransfers  []*Transaction `json:"credit_transfers,omitempty"`
+		OrganizationName string      `json:"organization_name,omitempty"`
+		OrganizationBIC  string      `json:"organization_bic,omitempty"`
+		OrganizationIBAN string      `json:"organization_iban,omitempty"`
+		CreditTransfers  []*Transfer `json:"credit_transfers,omitempty"`
 	}
 
 	centWrapper string
 
-	transaction Transaction
+	transfer Transfer
 
 	transactionWrapper struct {
-		transaction
+		transfer
 		AmountCent centWrapper `json:"amount"`
 	}
 )
@@ -68,13 +68,13 @@ func (c *centWrapper) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (t *Transaction) UnmarshalJSON(data []byte) error {
+func (t *Transfer) UnmarshalJSON(data []byte) error {
 	wr := new(transactionWrapper)
 	err := json.Unmarshal(data, wr)
 	if err != nil {
 		return err
 	}
-	*t = Transaction(wr.transaction)
+	*t = Transfer(wr.transfer)
 	t.AmountCent, err = wr.AmountCent.convert()
 	return err
 }

@@ -12,6 +12,8 @@ const (
 	EnvServerPort    = "APP_SERVER_PORT"
 	defaultPort      = 8080
 	transferEndpoint = "/transfer"
+	uploadEndpoint   = "/upload"
+	fileKey          = "file"
 )
 
 type Params struct {

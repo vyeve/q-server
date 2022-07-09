@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -71,13 +72,28 @@ func (s *serverImpl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case transferEndpoint:
 		s.handleUploadTransfers(w, r)
+	case uploadEndpoint:
+		s.handleUploadFile(w, r)
 	default:
-		http.Error(w, "Not found", http.StatusNotFound)
+		w.WriteHeader(http.StatusNotFound)
 	}
 }
 
 func (s *serverImpl) handleUploadTransfers(w http.ResponseWriter, r *http.Request) {
-	p, err := ioutil.ReadAll(r.Body)
+	s.uploadTransfers(r.Context(), w, r.Body)
+}
+
+func (s *serverImpl) handleUploadFile(w http.ResponseWriter, r *http.Request) {
+	f, _, err := r.FormFile(fileKey)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	s.uploadTransfers(r.Context(), w, f)
+}
+
+func (s *serverImpl) uploadTransfers(ctx context.Context, w http.ResponseWriter, body io.ReadCloser) {
+	defer body.Close() // nolint: errcheck
+	p, err := ioutil.ReadAll(body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -97,12 +113,12 @@ func (s *serverImpl) handleUploadTransfers(w http.ResponseWriter, r *http.Reques
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = s.repo.UploadTransfers(r.Context(), receipt)
+	err = s.repo.UploadTransfers(ctx, receipt)
 	switch err {
 	case nil:
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintln(w, "successfully uploaded transfers")
+		fmt.Fprintln(w, "successfully uploaded transfers") // nolint: errcheck
 	case repository.ErrInsufficientFunds, repository.ErrUnknownOrganization:
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 	case repository.ErrNoTransfers:

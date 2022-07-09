@@ -87,6 +87,7 @@ func (s *serverImpl) handleUploadFile(w http.ResponseWriter, r *http.Request) {
 	f, _, err := r.FormFile(fileKey)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	s.uploadTransfers(r.Context(), w, f)
 }

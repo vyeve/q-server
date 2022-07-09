@@ -1,10 +1,21 @@
-FROM golang:1.18.3 AS builder
+# build binary
+FROM golang:1.18.3-alpine AS builder
+
+RUN apk add --no-cache gcc musl-dev linux-headers
+
 WORKDIR /app
+
 COPY . .
+
 RUN go build -o q-server .
 
-FROM ubuntu:22.04
-RUN apt-get update && apt-get install -y ca-certificates
+# copy binary to main container
+FROM alpine:3.16.0
+
+RUN apk add --no-cache ca-certificates
+
 COPY --from=builder /app/q-server /app/q-server
+
 WORKDIR /app
-ENTRYPOINT [ "q-server" ]
+
+ENTRYPOINT [ "/app/q-server" ]

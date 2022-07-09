@@ -12,8 +12,7 @@ const (
 	EnvPathToSQLITE = "APP_SQLITE_DB_PATH"
 	EnvDBPoolSize   = "APP_SQLITE_DB_POOL_SIZE"
 
-	defaultPathToSQLITE = "../assets/schema.sqlite"
-	defaultPoolSize     = 10
+	defaultPoolSize = 10
 )
 
 var (

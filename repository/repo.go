@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
-	"os"
+	"fmt"
 	"strconv"
+	"syscall"
 
 	"github.com/vyeve/q-server/models"
 	"github.com/vyeve/q-server/utils/logger"
@@ -21,13 +22,19 @@ type repoImpl struct {
 
 // newConnection extract parameters through environment and returns connection to DB
 func newConnection() (*sql.DB, error) {
-	path := os.Getenv(EnvPathToSQLITE)
-	if len(path) == 0 {
-		path = defaultPathToSQLITE
+	path, found := syscall.Getenv(EnvPathToSQLITE)
+	if !found {
+		return nil, fmt.Errorf("not provided path to database. use %s environment", EnvPathToSQLITE)
 	}
-	poolSize, err := strconv.Atoi(os.Getenv(EnvDBPoolSize))
-	if err != nil {
-		poolSize = defaultPoolSize
+
+	var poolSize int
+	poolSizeEnv, found := syscall.Getenv(EnvDBPoolSize)
+	if found {
+		var err error
+		poolSize, err = strconv.Atoi(poolSizeEnv)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	db, err := sql.Open("sqlite3", path)

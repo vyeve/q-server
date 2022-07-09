@@ -18,8 +18,7 @@
                 "type": "object",
                 "properties": {
                     "amount": {
-                        "type": "string",
-                        "pattern": "^\\d+\\.{0,1}\\d{0,2}$"
+                        "type": "string"
                     },
                     "currency": {
                         "type": "string",

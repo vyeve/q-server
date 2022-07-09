@@ -3,6 +3,8 @@ module github.com/vyeve/q-server
 go 1.18
 
 require (
+	github.com/mattn/go-sqlite3 v1.14.14
+	github.com/sirupsen/logrus v1.8.1
 	github.com/xeipuuv/gojsonschema v1.2.0
 	go.uber.org/fx v1.17.1
 	go.uber.org/multierr v1.8.0

@@ -7,8 +7,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/vyeve/q-server/logger"
 	"github.com/vyeve/q-server/models"
+	"github.com/vyeve/q-server/utils/logger"
 
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/fx"

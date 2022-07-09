@@ -3,7 +3,7 @@ package repository
 import (
 	"errors"
 
-	"github.com/vyeve/q-server/logger"
+	"github.com/vyeve/q-server/utils/logger"
 
 	"go.uber.org/fx"
 )

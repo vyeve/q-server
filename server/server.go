@@ -52,7 +52,7 @@ func New(params Params) Server {
 	srv.limit = make(chan struct{}, limit)
 	params.LifeCycle.Append(
 		fx.Hook{
-			OnStart: func(ctx context.Context) error {
+			OnStart: func(context.Context) error {
 				srv.logger.Infof("start to listen on port %s", port)
 				go func() {
 					if err := srv.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -61,8 +61,9 @@ func New(params Params) Server {
 				}()
 				return nil
 			},
-			OnStop: func(ctx context.Context) error {
-				close(srv.limit)
+			OnStop: func(context.Context) error {
+				srv.logger.Infof("server stopped.")
+				defer close(srv.limit) // need to close channel after stop HTTP server
 				return srv.server.Close()
 			},
 		},
@@ -70,8 +71,10 @@ func New(params Params) Server {
 	return srv
 }
 
+// Init method is needed to invoke server on start
 func (s *serverImpl) Init() {}
 
+// ServeHTTP implements http.Handler interface
 func (s *serverImpl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.logger.Debugf("request %q. method: %s", r.URL.Path, r.Method)
 	s.limit <- struct{}{}
@@ -92,10 +95,12 @@ func (s *serverImpl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// handleUploadTransfers handles /transfers endpoint
 func (s *serverImpl) handleUploadTransfers(w http.ResponseWriter, r *http.Request) {
 	s.uploadTransfers(r.Context(), w, r.Body)
 }
 
+// handleUploadFile handles /upload endpoint
 func (s *serverImpl) handleUploadFile(w http.ResponseWriter, r *http.Request) {
 	f, _, err := r.FormFile(fileKey)
 	if err != nil {
@@ -105,6 +110,7 @@ func (s *serverImpl) handleUploadFile(w http.ResponseWriter, r *http.Request) {
 	s.uploadTransfers(r.Context(), w, f)
 }
 
+// uploadTransfers common method to upload transfers
 func (s *serverImpl) uploadTransfers(ctx context.Context, w http.ResponseWriter, body io.ReadCloser) {
 	defer body.Close() // nolint: errcheck
 	p, err := ioutil.ReadAll(body)

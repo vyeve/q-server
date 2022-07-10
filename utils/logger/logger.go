@@ -15,6 +15,7 @@ const (
 	defaultLogLevel = logrus.InfoLevel
 )
 
+// Logger logs messages to stdErr
 type Logger interface {
 	Debugf(format string, args ...interface{})
 	Infof(format string, args ...interface{})

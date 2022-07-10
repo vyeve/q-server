@@ -59,7 +59,7 @@ func NewRepository(params Params) (Repository, error) {
 		logger: params.Logger,
 	}
 	params.LifeCycle.Append(fx.Hook{
-		OnStop: func(ctx context.Context) error {
+		OnStop: func(context.Context) error {
 			return db.Close()
 		},
 	})

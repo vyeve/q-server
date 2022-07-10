@@ -12,6 +12,7 @@ import (
 //go:embed schema.json
 var schemaJSON []byte
 
+// ValidatorJSON validates request to defined json schema
 type ValidatorJSON interface {
 	Validate(raw json.RawMessage) error
 }
@@ -19,6 +20,7 @@ type validatorImpl struct {
 	schema *jsonSchema.Schema
 }
 
+// New returns new instance of ValidatorJSON
 func New() (ValidatorJSON, error) {
 	s, err := jsonSchema.NewSchema(jsonSchema.NewBytesLoader(schemaJSON))
 	if err != nil {
@@ -29,6 +31,7 @@ func New() (ValidatorJSON, error) {
 	}, nil
 }
 
+// Validate implements ValidatorJSON interface
 func (s *validatorImpl) Validate(raw json.RawMessage) error {
 	res, err := s.schema.Validate(jsonSchema.NewBytesLoader(raw))
 	if err != nil {

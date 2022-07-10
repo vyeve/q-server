@@ -6,9 +6,10 @@ Test server for upload bulk data
 To configure server was used environment approach.
 
 - *APP_SQLITE_DB_PATH* defines path to database. **REQUIRED**
-- *APP_SERVER_PORT* defines port on which server will listen (default is **8080**)
-- *APP_LOG_LEVEL* is used to define log level. Possible values are `debug`, `info`, `warn`, `error`, `fatal`. Default is **info**.
+- *APP_SERVER_PORT* defines port on which server will listen. Default is **8080**.
+- *APP_LOG_LEVEL* is used to define log level. Possible values are `debug`, `info`, `warn`, `error`, `fatal`.Default is **info**.
 - *APP_SQLITE_DB_POOL_SIZE* defines pool size of connections to database.
+- *APP_REQUESTS_LIMIT* defines request limit to server. Default is **100**.
 
 ## Start application
 
@@ -24,7 +25,7 @@ APP_SQLITE_DB_PATH=assets/schema.sqlite go run main.go
 
 ```shell
 docker build -t q-server .
-docker run -it --rm -p 8080:8080 -v $(pwd)/assets:/app/data --env-file config.env q-server
+docker run -it --rm -p 8080:8080 -v $(pwd)/assets:/app/data --env  APP_SQLITE_DB_PATH=/app/data/schema.sqlite q-server
 ```
 
 ### 3. Run docker-compose
@@ -73,3 +74,5 @@ curl --request POST 'http://127.0.0.1:8080/upload' \
 ## TODO
 
 This approach will be work fine with count transfers less than 1000. If there are expecting more transfers in one request, should split `INSERT INTO` queries to bulks.
+
+Store amounts in cents is not good approach when we need to get some statistic (average, percentage etc). It's better to store cents which multiplied to 1000000 (common practice).

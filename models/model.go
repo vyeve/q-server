@@ -99,7 +99,7 @@ func (c centWrapper) convert() (int64, error) {
 	}
 	out, err := strconv.ParseUint(cents, 10, 64)
 	if err != nil {
-		return -1, err
+		return -1, ErrIncorrectAmount
 	}
 	return int64(out), nil
 }

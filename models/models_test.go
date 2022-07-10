@@ -80,6 +80,12 @@ func TestConvertFiatToCents(t *testing.T) {
 			expResult: -1,
 			needErr:   true,
 		},
+		{
+			name:      "test with space",
+			cents:     " ",
+			expResult: -1,
+			needErr:   true,
+		},
 	}
 
 	for _, tc := range testCases {
